@@ -6,14 +6,14 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Set work directory
-WORKDIR /load-testing-practices
+WORKDIR /ltp/sample-feed
 
 # Install dependencies
-COPY requirements.txt /load-testing-practices/
+COPY requirements.txt /ltp/sample-feed/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy project
-COPY . /load-testing-practices/
+COPY . /ltp/sample-feed
 
 RUN python manage.py makemigrations && python manage.py migrate
 
