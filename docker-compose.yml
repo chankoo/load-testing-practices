@@ -4,6 +4,7 @@ services:
   sample-feed:
     build:
       context: ./sample-feed/
+    container_name: sample-feed
     command: gunicorn --bind 0.0.0.0:8000 wsgi:application
     volumes:
       - ./sample-feed:/ltp/sample-feed
@@ -12,3 +13,30 @@ services:
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3005:3000'
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    user: root
+  influxdb:
+    image: influxdb:1.8.10-alpine
+    platform: linux/amd64
+    container_name: influx
+    ports:
+      - '8086:8086'
+    environment:
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+    tty: true
+    stdin_open: true
+    volumes:
+      - influx-storage:/var/lib/influxdb
+volumes:
+  grafana-storage: {}
+  influx-storage: {}
