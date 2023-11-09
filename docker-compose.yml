@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  sample-feed:
+    build:
+      context: ./sample-feed/
+    command: gunicorn --bind 0.0.0.0:8000 wsgi:application
+    volumes:
+      - ./sample-feed:/ltp/sample-feed
+    ports:
+      - "8000:8000"
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
+      PYTHONUNBUFFERED: 1
