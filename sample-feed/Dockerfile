@@ -20,3 +20,5 @@ COPY . /ltp/sample-feed
 RUN python manage.py makemigrations && python manage.py migrate
 
 RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log
+
+RUN echo "from feed import script" | python manage.py shell
