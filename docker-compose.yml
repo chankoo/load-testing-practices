@@ -5,7 +5,7 @@ services:
     build:
       context: ./sample-feed/
     container_name: sample-feed
-    command: gunicorn --bind 0.0.0.0:8000 wsgi:application
+    command: gunicorn --config gunicorn_config.py wsgi:application
     volumes:
       - ./sample-feed:/ltp/sample-feed
     ports:
