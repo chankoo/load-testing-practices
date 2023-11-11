@@ -9,7 +9,12 @@ export let options = {
 
 export default function () {
   const url = 'http://0.0.0.0:8000/api/posts/';
-  const res = http.get(url);
+  const params = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+  const res = http.get(url, params);
   const checkResult = check(res, {
     'is status 200': (r) => r.status === 200,
   });
