@@ -4,11 +4,11 @@ import { sleep, check, fail } from 'k6';
 
 export let options = {
   vus: 1000,
-  duration: "5m"
+  duration: "3m"
 };
 
 export default function () {
-  const url = 'http://0.0.0.0:8000/api/posts/';
+  const url = 'http://test-ecs-alb-46859038.ap-northeast-2.elb.amazonaws.com:81/api/health-check/?format=json';
   const params = {
     headers: {
       'Content-Type': 'application/json',
