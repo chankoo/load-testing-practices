@@ -5,11 +5,12 @@ services:
     build:
       context: ./sample-feed/
     container_name: sample-feed
-    command: gunicorn --config gunicorn_config.py wsgi:application
     volumes:
       - ./sample-feed:/ltp/sample-feed
     ports:
-      - "8000:8000"
+      - "80:80"
+    entrypoint:
+      [ "/ltp/sample-feed/docker-entrypoint.sh" ]
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
