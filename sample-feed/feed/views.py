@@ -1,8 +1,19 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .models import Post
 from .serializers import PostSerializer
 from django.conf import settings
 import pickle
+
+
+class HealthCheckView(APIView):
+    """
+    Health Check API View to check the status of the application.
+    """
+
+    def get(self, request, *args, **kwargs):
+        return Response({"status": "Healthy"}, status=status.HTTP_200_OK)
 
 
 class PostListCreateView(generics.ListCreateAPIView):
@@ -17,3 +28,5 @@ class PostListCreateView(generics.ListCreateAPIView):
             settings.REDIS_CLIENT.set('posts', queryset_bytes)
         queryset = pickle.loads(queryset_bytes)
         return queryset
+
+
