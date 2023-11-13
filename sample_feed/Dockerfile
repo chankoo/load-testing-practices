@@ -5,7 +5,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get install procps -y
+RUN apt-get update && apt-get install -y procps default-libmysqlclient-dev pkg-config gcc
 
 # Set work directory
 WORKDIR /ltp/sample_feed
