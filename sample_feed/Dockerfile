@@ -8,14 +8,14 @@ ENV PYTHONUNBUFFERED 1
 RUN apt-get update && apt-get install procps -y
 
 # Set work directory
-WORKDIR /ltp/sample-feed
+WORKDIR /ltp/sample_feed
 
 # Install dependencies
-COPY requirements.txt /ltp/sample-feed/
+COPY requirements.txt /ltp/sample_feed/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy project
-COPY . /ltp/sample-feed
+COPY . /ltp/sample_feed
 
 RUN python manage.py makemigrations && python manage.py migrate
 

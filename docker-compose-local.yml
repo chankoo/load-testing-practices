@@ -3,14 +3,14 @@ version: '3.8'
 services:
   sample-feed:
     build:
-      context: ./sample-feed/
+      context: ./sample_feed/
     container_name: sample-feed
     volumes:
-      - ./sample-feed:/ltp/sample-feed
+      - ./sample_feed:/ltp/sample_feed
     ports:
       - "80:80"
     entrypoint:
-      [ "/ltp/sample-feed/docker-entrypoint.sh" ]
+      [ "/ltp/sample_feed/docker-entrypoint.sh" ]
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
