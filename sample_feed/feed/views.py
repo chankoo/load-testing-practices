@@ -1,10 +1,10 @@
+import pickle
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post
 from .serializers import PostSerializer
-from django.conf import settings
-import pickle
+from sample_feed.services.caches import RedisCacheWrapper
 
 
 class HealthCheckView(APIView):
@@ -21,11 +21,12 @@ class PostListCreateView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
 
     def get_queryset(self):
-        queryset_bytes = settings.REDIS_CLIENT.get('posts')
+        redis_client = RedisCacheWrapper().rd
+        queryset_bytes = redis_client.get('posts')
         if not queryset_bytes:
             queryset = Post.objects.all()
             queryset_bytes = pickle.dumps(queryset)
-            settings.REDIS_CLIENT.set('posts', queryset_bytes)
+            redis_client.set('posts', queryset_bytes)
         queryset = pickle.loads(queryset_bytes)
         return queryset
 
