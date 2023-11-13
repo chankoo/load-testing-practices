@@ -23,8 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # If you are using Django Rest Framework
-    'feed',        # Your feed app
+    'rest_framework',
+    'feed',
 ]
 
 MIDDLEWARE = [

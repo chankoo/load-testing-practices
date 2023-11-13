@@ -3,4 +3,4 @@ gunicorn>=20.0,<21.0
 gevent
 djangorestframework>=3.12,<4.0
 redis
-mysqlclient
+pymysql
