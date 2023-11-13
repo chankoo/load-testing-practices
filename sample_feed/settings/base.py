@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 sys.path.append(str(BASE_DIR))
 
 
@@ -105,9 +105,3 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/x.x/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-
-# Redis configuration
-REDIS_HOST = 'redis'  # name of redis container
-REDIS_PORT = 6379
-REDIS_DB = 0

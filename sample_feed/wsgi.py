@@ -7,9 +7,19 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 """
 
+
 import os
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
+
+def check_local_uname():
+    import platform
+    return 'linuxkit' in platform.uname().release
+
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.local' if check_local_uname() else 'settings.cloud')
+
 
 application = get_wsgi_application()
+
+
