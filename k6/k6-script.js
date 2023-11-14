@@ -8,7 +8,7 @@ export let options = {
 };
 
 export default function () {
-  const url = 'http://test-ecs-alb-46859038.ap-northeast-2.elb.amazonaws.com:81/api/health-check/?format=json';
+  const url = 'http://test-alb-ecs-1-1933183649.ap-northeast-2.elb.amazonaws.com/api/posts/?format=json';
   const params = {
     headers: {
       'Content-Type': 'application/json',
