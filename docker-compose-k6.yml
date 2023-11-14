@@ -13,20 +13,23 @@ services:
       - grafana
     ports:
       - "8086:8086"
+    volumes:
+      - influx-storage:/var/lib/influxdb
     environment:
       - INFLUXDB_DB=k6
       - INFLUXDB_ADMIN_ENABLED=true
       - INFLUXDB_ADMIN_USER=admin
       - INFLUXDB_ADMIN_PASSWORD=admin
   grafana:
-    image: grafana/grafana:9.3.8
+    image: grafana/grafana:latest
     container_name: grafana
     networks:
       - grafana
     ports:
       - "3000:3000"
     volumes:
-      - grafana-storage:/etc/grafana/provisioning/
+      - grafana-storage:/var/lib/grafana
+    user: root
   k6:
     image: grafana/k6:latest
     container_name: k6
@@ -40,3 +43,4 @@ services:
       - ./k6:/scripts
 volumes:
   grafana-storage: {}
+  influx-storage: {}
