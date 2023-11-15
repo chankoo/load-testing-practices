@@ -24,7 +24,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'feed',
+    'sample_feed.core',
+    'sample_feed.post',
+    'sample_feed.feed',
 ]
 
 MIDDLEWARE = [
@@ -56,16 +58,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/x.x/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/x.x/ref/settings/#auth-password-validators
