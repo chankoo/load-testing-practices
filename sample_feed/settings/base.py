@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'sample_feed',
     'sample_feed.core',
     'sample_feed.post',
     'sample_feed.feed',
