@@ -50,3 +50,9 @@ def clean_tables():
     for model in all_models:
         if 'sample_feed' in str(model):
             model.objects.all().delete()
+
+
+def do_initial_gen():
+    if Person.objects.count() == 0:
+        person = create_random_person()
+        create_random_relations(person=person.id, n=500)

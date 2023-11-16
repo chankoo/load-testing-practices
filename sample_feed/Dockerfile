@@ -21,4 +21,4 @@ RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/
 
 RUN python manage.py makemigrations && python manage.py migrate
 
-RUN echo "from sample_feed.scripts import create_random_relations;create_random_relations(person=None, n=500)" | python manage.py shell
+RUN echo "from sample_feed.scripts import do_initial_gen;do_initial_gen()" | python manage.py shell
