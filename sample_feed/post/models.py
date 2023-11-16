@@ -17,4 +17,4 @@ class Post(BaseModel):
         app_label = 'post'
 
     def __str__(self):
-        return f"Post by {self.person.username} on {self.created_at}"
+        return f"Post by {self.person} on {self.created_at}"
