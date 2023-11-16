@@ -4,3 +4,5 @@ gevent
 djangorestframework>=3.12,<4.0
 redis
 pymysql
+requests
+icecream

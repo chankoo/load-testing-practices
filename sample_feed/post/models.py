@@ -10,11 +10,11 @@ class Person(BaseModel):
 
 
 class Post(BaseModel):
-    author = models.ForeignKey("Person", on_delete=models.CASCADE)
-    content = models.TextField()
+    person = models.IntegerField(null=True, blank=True)
+    content = models.CharField(max_length=2000, default='')
 
     class Meta:
         app_label = 'post'
 
     def __str__(self):
-        return f"Post by {self.author.username} on {self.created_at}"
+        return f"Post by {self.person.username} on {self.created_at}"

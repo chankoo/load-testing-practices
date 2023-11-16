@@ -21,7 +21,7 @@ def create_100_posts():
         user = create_random_user()  # Create a new user for each post
         content_length = random.randint(200, 500)  # Random length between 200 and 500
         content = create_random_text(content_length)  # Generate random text content
-        post = Post(author=user, content=content)
+        post = Post(person=user.id, content=content)
         post.save()
 
 
