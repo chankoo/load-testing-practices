@@ -17,6 +17,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy project
 COPY . /ltp/sample_feed
 
+RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log
+
 RUN python manage.py makemigrations && python manage.py migrate
 
-RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log
+RUN echo "from sample_feed.scripts import create_random_relations;create_random_relations(person=None, n=500)" | python manage.py shell

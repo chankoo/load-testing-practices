@@ -16,13 +16,12 @@ class PostSerializer(serializers.ModelSerializer):
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
-        data = PostSerializer(instance).data
+        data = {
+            "person": instance.person,
+            "post": instance.id,
+            "content": instance.content,
+        }
         try:
-            data = {
-                "person": data["person"],
-                "post": data["id"],
-                "content": data["content"],
-            }
             requests.post(FEED_RECORDS_URL, headers=headers, data=json.dumps(data))
         except Exception as e:
             raise e
