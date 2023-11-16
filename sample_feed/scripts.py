@@ -1,5 +1,6 @@
 import random
 import string
+from django.apps import apps
 from sample_feed.post.models import Person
 from sample_feed.feed.models import PersonRelation
 from sample_feed.post.serializers import PostSerializer
@@ -43,3 +44,9 @@ def create_posts(person: int = None, n=10):
         posts.append(ser.instance)
     return posts
 
+
+def clean_tables():
+    all_models = apps.get_models()
+    for model in all_models:
+        if 'sample_feed' in str(model):
+            model.objects.all().delete()

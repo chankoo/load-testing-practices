@@ -22,7 +22,7 @@ class PostListCreateView(generics.ListCreateAPIView):
         queryset_bytes = redis_client.get('posts')
         if not queryset_bytes:
             queryset = self.queryset
-            queryset_bytes = pickle.dumps(queryset)
+            queryset_bytes = pickle.dumps(queryset.all())
             redis_client.set('posts', queryset_bytes)
         queryset = pickle.loads(queryset_bytes)
         return queryset

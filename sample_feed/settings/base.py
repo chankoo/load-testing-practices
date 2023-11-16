@@ -7,7 +7,7 @@ sys.path.append(str(BASE_DIR))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'your-secret-key'
+SECRET_KEY = 'hihi'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
