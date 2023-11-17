@@ -1,0 +1,50 @@
+{
+    "family": "sample-feed",
+    "networkMode": "awsvpc",
+    "taskRoleArn": "arn:aws:iam::009954058431:role/ecsTaskRole",
+    "executionRoleArn": "arn:aws:iam::009954058431:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "sample-feed",
+            "image": "009954058431.dkr.ecr.ap-northeast-2.amazonaws.com/sample-feed:latest",
+            "portMappings": [
+                {
+                    "name": "sample-feed-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [
+                "/ltp/sample_feed/docker-entrypoint.sh"
+            ],
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/sample-feed",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "4096",
+    "memory": "8192",
+    "volumes": [],
+    "runtimePlatform": {
+        "cpuArchitecture": "ARM64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
