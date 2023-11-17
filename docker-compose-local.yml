@@ -46,13 +46,11 @@ services:
     ports:
       - '6379:6379'
   mysql:
-    image: mysql:latest
+    build:
+      context: ./db/
     container_name: mysql
     ports:
       - '3306:3306'
-    environment:
-      MYSQL_DATABASE: sample-feed
-      MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./db/mysql-init-files/:/docker-entrypoint-initdb.d/
       - mysql-storage:/var/lib/mysql
