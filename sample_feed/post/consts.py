@@ -1,1 +1,3 @@
-FEED_RECORDS_URL = "http://alb-ecs-1586857067.ap-northeast-2.elb.amazonaws.com/v1/feed_records/"
+from django.conf import settings
+
+FEED_RECORDS_URL = f"http://{settings.API_HOST}/v1/feed_records/"

@@ -6,3 +6,4 @@ redis
 pymysql
 requests
 icecream
+cryptography

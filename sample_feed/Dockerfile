@@ -18,9 +18,3 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /ltp/sample_feed
 
 RUN mkdir /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log
-
-RUN python manage.py flush --noinput && find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-
-RUN python manage.py makemigrations && python manage.py migrate
-
-RUN echo "from sample_feed.scripts import do_initial_gen;do_initial_gen()" | python manage.py shell

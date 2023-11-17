@@ -14,6 +14,8 @@ services:
     environment:
       PYTHONDONTWRITEBYTECODE: 1
       PYTHONUNBUFFERED: 1
+    depends_on:
+      - mysql
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -43,6 +45,18 @@ services:
     container_name: redis
     ports:
       - '6379:6379'
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: sample-feed
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./db/mysql-init-files/:/docker-entrypoint-initdb.d/
+      - mysql-storage:/var/lib/mysql
 volumes:
   grafana-storage: {}
   influx-storage: {}
+  mysql-storage: {}
