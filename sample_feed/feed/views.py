@@ -27,8 +27,12 @@ class FeedRecordsView(BaseAPIView):
 
         # Add FeedRecords for friends of mine
         relations = PersonRelation.objects.filter(person=data["person"], relation_type='friend')
+        data_list = []
         for relation in relations:
-            serializer = FeedRecordSerializer(data={**data, "owner": relation.related_person})
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            data_item = data.copy()
+            data_item["owner"] = relation.related_person
+            data_list.append(data_item)
+        serializer = FeedRecordSerializer(data=data_list, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return super(FeedRecordsView, self).post(request, *args, **kwargs)

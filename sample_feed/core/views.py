@@ -27,6 +27,7 @@ class HealthCheckView(BaseAPIView):
 class ResetDataView(BaseAPIView):
     def get(self, request, *args, **kwargs):
         success = False
+        init_person_id = None
         if request.GET.get('key') == settings.SECRET_KEY:
             clean_tables()
             redis = RedisCacheWrapper()
