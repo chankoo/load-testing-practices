@@ -17,4 +17,4 @@ innodb_flush_log_at_trx_commit = 2
 
 max_connections = 1000
 
-connect_timeout = 20
+# connect_timeout = 20
