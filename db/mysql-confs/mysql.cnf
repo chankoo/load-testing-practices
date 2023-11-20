@@ -15,4 +15,6 @@ innodb_buffer_pool_size = 2048M
 
 innodb_flush_log_at_trx_commit = 2
 
-max_connections = 500
+max_connections = 1000
+
+connect_timeout = 20
