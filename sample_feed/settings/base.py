@@ -98,3 +98,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/x.x/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# DB
+CONN_MAX_AGE = 5 * 60

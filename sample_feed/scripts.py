@@ -49,10 +49,16 @@ def clean_tables():
     all_models = apps.get_models()
     for model in all_models:
         if 'sample_feed' in str(model):
-            model.objects.all().delete()
+            if 'post_person' in str(model):
+                model.objects.all().exclude(id=1).delete()
+            else:
+                model.objects.all().delete()
 
 
-def do_initial_gen():
-    if Person.objects.count() == 0:
+def do_initial_gen() -> int:
+    try:
+        person = Person(id=1)
+    except Person.DoesNotExist:
         person = create_random_person()
-        create_random_relations(person=person.id, n=500)
+    create_random_relations(person=person.id, n=500)
+    return person.id

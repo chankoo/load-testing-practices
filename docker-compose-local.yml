@@ -53,6 +53,7 @@ services:
       - '3306:3306'
     volumes:
       - ./db/mysql-init-files/:/docker-entrypoint-initdb.d/
+      - ./db/mysql-confs/:/etc/mysql/conf.d/
       - mysql-storage:/var/lib/mysql
 volumes:
   grafana-storage: {}

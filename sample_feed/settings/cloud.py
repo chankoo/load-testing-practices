@@ -9,7 +9,7 @@ DATABASES = {
         "NAME": "sample_feed",
         "USER": "root",
         "PASSWORD": "root",
-        "HOST": "172.31.31.105",
+        "HOST": "172.31.16.15",
         "PORT": "3306",
     }
 }
