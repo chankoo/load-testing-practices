@@ -11,6 +11,9 @@ DATABASES = {
         "PASSWORD": "root",
         "HOST": "mysql",
         "PORT": "3306",
+        "OPTIONS": {
+            "isolation_level": "READ COMMITTED"
+        }
     }
 }
 REDIS_HOST = 'redis'

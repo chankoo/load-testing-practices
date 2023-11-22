@@ -29,7 +29,6 @@ const test = async () => {
   if (!checkResult1) {
     fail('Failed due to an unexpected status code: ' + res1.status);
   }
-  sleep(1);
 }
 
 export default test;
