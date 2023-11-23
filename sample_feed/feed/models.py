@@ -3,7 +3,7 @@ from sample_feed.core.models import BaseModel
 
 
 class FeedRecord(BaseModel):
-    owner = models.IntegerField()  # feed owner id
+    owner = models.IntegerField(db_index=True)  # feed owner id
     person = models.IntegerField()  # author id
     post = models.IntegerField()  # post id
     content = models.CharField(max_length=2000, default='')
@@ -14,7 +14,7 @@ class FeedRecord(BaseModel):
 
 
 class PersonRelation(BaseModel):
-    person = models.IntegerField()
+    person = models.IntegerField(db_index=True)
     related_person = models.IntegerField()
     relation_type = models.CharField(max_length=10, default='friend')
 
