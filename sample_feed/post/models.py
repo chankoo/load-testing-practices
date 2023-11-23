@@ -10,7 +10,7 @@ class Person(BaseModel):
 
 
 class Post(BaseModel):
-    person = models.IntegerField(null=True, blank=True)
+    person = models.IntegerField(null=True, blank=True, db_index=True)
     content = models.CharField(max_length=2000, default='')
 
     class Meta:

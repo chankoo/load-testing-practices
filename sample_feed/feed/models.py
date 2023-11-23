@@ -2,17 +2,6 @@ from django.db import models
 from sample_feed.core.models import BaseModel
 
 
-class FeedRecord(BaseModel):
-    owner = models.IntegerField(db_index=True)  # feed owner id
-    person = models.IntegerField()  # author id
-    post = models.IntegerField()  # post id
-    content = models.CharField(max_length=2000, default='')
-    hide = models.BooleanField(default=False)
-
-    class Meta:
-        app_label = 'feed'
-
-
 class PersonRelation(BaseModel):
     person = models.IntegerField(db_index=True)
     related_person = models.IntegerField()

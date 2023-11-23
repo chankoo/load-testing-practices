@@ -3,7 +3,7 @@ import json
 import time
 from rest_framework import serializers
 from .models import Post
-from .consts import FEED_RECORDS_URL
+from .consts import FEED_POSTS_URL
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -26,7 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at_ts": time.mktime(instance.created_at.timetuple()),
         }
         try:
-            requests.post(FEED_RECORDS_URL, headers=headers, data=json.dumps(data))
+            requests.post(FEED_POSTS_URL, headers=headers, data=json.dumps(data))
         except Exception as e:
             raise e
         return instance

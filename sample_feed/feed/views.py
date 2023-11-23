@@ -8,30 +8,28 @@ from .caches import FeedCacheWrapper
 class MyFeedView(BaseAPIView):
     def get(self, request, *args, **kwargs):
         # me who?
-        # records = FeedRecord.objects.exclude(hide=True).order_by('-created_at')
         posts = []
         return Response({"data": FeedPostSerializer(posts, many=True).data})
 
 
 class FeedView(BaseAPIView):
     def get(self, request, *args, **kwargs):
-        # records = FeedRecord.objects.filter(owner=kwargs["person_id"]).exclude(hide=True).order_by('-created_at')
         fc = FeedCacheWrapper()
         posts = fc.get_feed(owner=kwargs["person_id"])
         return Response({"data": FeedPostSerializer(posts, many=True).data})
 
 
-class FeedRecordsView(BaseAPIView):
+class FeedPostsView(BaseAPIView):
     def post(self, request, *args, **kwargs):
         post = request.data.copy()
         fc = FeedCacheWrapper()
 
-        # Add a FeedRecord for me
+        # Add feed cache for post owner
         fc.add_feed_posts(owner=post["person"], posts=[post])
 
-        # Add FeedRecords for friends of mine
+        # Add feed cache for friends of post owner
         relations = PersonRelation.objects.filter(person=post["person"], relation_type='friend')
         for relation in relations:
             owner = relation.related_person
             fc.add_feed_posts(owner=owner, posts=[post])
-        return super(FeedRecordsView, self).post(request, *args, **kwargs)
+        return super(FeedPostsView, self).post(request, *args, **kwargs)
