@@ -6,13 +6,13 @@ from .serializers import FeedRecordSerializer
 
 class MyFeedView(BaseAPIView):
     def get(self, request, *args, **kwargs):
-        records = FeedRecord.objects.exclude(hide=True)
+        records = FeedRecord.objects.exclude(hide=True).order_by('-created_at')
         return Response({"data": FeedRecordSerializer(records, many=True).data})
 
 
 class FeedView(BaseAPIView):
     def get(self, request, *args, **kwargs):
-        records = FeedRecord.objects.filter(owner=kwargs["person_id"]).exclude(hide=True)
+        records = FeedRecord.objects.filter(owner=kwargs["person_id"]).exclude(hide=True).order_by('-created_at')
         return Response({"data": FeedRecordSerializer(records, many=True).data})
 
 
