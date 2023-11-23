@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 from rest_framework import serializers
 from .models import Post
 from .consts import FEED_RECORDS_URL
@@ -17,12 +18,23 @@ class PostSerializer(serializers.ModelSerializer):
             "Accept": "application/json",
         }
         data = {
+            "id": instance.id,
             "person": instance.person,
-            "post": instance.id,
             "content": instance.content,
+            "created_at": instance.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "updated_at": instance.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "created_at_ts": time.mktime(instance.created_at.timetuple()),
         }
         try:
             requests.post(FEED_RECORDS_URL, headers=headers, data=json.dumps(data))
         except Exception as e:
             raise e
         return instance
+
+
+class FeedPostSerializer(serializers.Serializer):
+    id = serializers.IntegerField(required=False)
+    person = serializers.CharField()
+    content = serializers.CharField()
+    created_at = serializers.CharField()
+    updated_at = serializers.CharField()
