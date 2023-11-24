@@ -1,0 +1,50 @@
+{
+    "family": "celery-feed",
+    "networkMode": "awsvpc",
+    "taskRoleArn": "arn:aws:iam::009954058431:role/ecsTaskRole",
+    "executionRoleArn": "arn:aws:iam::009954058431:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "celery-feed",
+            "image": "009954058431.dkr.ecr.ap-northeast-2.amazonaws.com/celery-feed:latest",
+            "portMappings": [
+                {
+                    "name": "celery-feed-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [
+                "/ltp/sample_feed/feed/docker-entrypoint-celery.sh"
+            ],
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/celery-feed",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "2048",
+    "memory": "4096",
+    "volumes": [],
+    "runtimePlatform": {
+        "cpuArchitecture": "ARM64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
