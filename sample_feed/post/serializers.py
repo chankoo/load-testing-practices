@@ -25,10 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at": instance.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
             "created_at_ts": time.mktime(instance.created_at.timetuple()),
         }
-        try:
-            requests.post(FEED_POSTS_URL, headers=headers, data=json.dumps(data))
-        except Exception as e:
-            raise e
+        requests.post(FEED_POSTS_URL, headers=headers, data=json.dumps(data))
         return instance
 
 

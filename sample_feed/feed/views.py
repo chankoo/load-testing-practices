@@ -1,8 +1,9 @@
 from sample_feed.core.views import BaseAPIView
-from sample_feed.feed.models import PersonRelation
 from rest_framework.response import Response
 from sample_feed.post.serializers import FeedPostSerializer
 from .caches import FeedCacheWrapper
+from .tasks import update_feed_cache
+from .models import PersonRelation
 
 
 class MyFeedView(BaseAPIView):
@@ -22,14 +23,10 @@ class FeedView(BaseAPIView):
 class FeedPostsView(BaseAPIView):
     def post(self, request, *args, **kwargs):
         post = request.data.copy()
-        fc = FeedCacheWrapper()
 
-        # Add feed cache for post owner
-        fc.add_feed_posts(owner=post["person"], posts=[post])
-
-        # Add feed cache for friends of post owner
-        relations = PersonRelation.objects.filter(person=post["person"], relation_type='friend')
-        for relation in relations:
-            owner = relation.related_person
-            fc.add_feed_posts(owner=owner, posts=[post])
+        related_persons = PersonRelation.objects.filter(
+            person=post["person"],
+            relation_type='friend'
+        ).values_list('related_person', flat=True)
+        update_feed_cache.delay(post=post, related_persons=list(related_persons))
         return super(FeedPostsView, self).post(request, *args, **kwargs)
