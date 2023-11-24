@@ -59,7 +59,8 @@ services:
     container_name: celery-feed
     volumes:
       - ./sample_feed:/ltp/sample_feed
-    command: celery -A feed worker --loglevel=info
+    entrypoint:
+      [ "/ltp/sample_feed/feed/docker-entrypoint-celery.sh" ]
     depends_on:
       - sample-feed
 volumes:
