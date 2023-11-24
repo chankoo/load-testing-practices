@@ -52,11 +52,11 @@ services:
     container_name: redis
     ports:
       - '6379:6379'
-  celery:
+  celery-feed:
     build:
       context: ./sample_feed
-      dockerfile: celery.Dockerfile
-    container_name: celery
+      dockerfile: ./feed/celery.Dockerfile
+    container_name: celery-feed
     volumes:
       - ./sample_feed:/ltp/sample_feed
     command: celery -A feed worker --loglevel=info
