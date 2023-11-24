@@ -21,9 +21,6 @@ services:
       - "80:80"
     entrypoint:
       [ "/ltp/sample_feed/docker-entrypoint.sh" ]
-    environment:
-      PYTHONDONTWRITEBYTECODE: 1
-      PYTHONUNBUFFERED: 1
     depends_on:
       - mysql
   grafana:
@@ -55,6 +52,16 @@ services:
     container_name: redis
     ports:
       - '6379:6379'
+  celery:
+    build:
+      context: ./sample_feed
+      dockerfile: celery.Dockerfile
+    container_name: celery
+    volumes:
+      - ./sample_feed:/ltp/sample_feed
+    command: celery -A feed worker --loglevel=info
+    depends_on:
+      - sample-feed
 volumes:
   grafana-storage: {}
   influx-storage: {}
