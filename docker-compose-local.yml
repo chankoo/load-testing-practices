@@ -3,13 +3,13 @@ version: '3.8'
 services:
   mysql:
     build:
-      context: ./db/
+      context: ./db/mysql/
     container_name: mysql
     ports:
       - '3306:3306'
     volumes:
-      - ./db/mysql-init-files/:/docker-entrypoint-initdb.d/
-      - ./db/mysql-confs/:/etc/mysql/conf.d/
+      - ./db/mysql/mysql-init-files/:/docker-entrypoint-initdb.d/
+      - ./db/mysql/mysql-confs/:/etc/mysql/conf.d/
       - mysql-storage:/var/lib/mysql
   sample-feed:
     build:
