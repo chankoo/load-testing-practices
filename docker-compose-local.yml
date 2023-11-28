@@ -23,6 +23,16 @@ services:
       [ "/ltp/sample_feed/docker-entrypoint.sh" ]
     depends_on:
       - mysql
+  sample-chat:
+    build:
+      context: ./sample_chat/
+    container_name: sample-chat
+    volumes:
+      - ./sample_chat:/ltp/sample_chat
+    ports:
+      - "8080:8080"
+    entrypoint:
+      [ "/ltp/sample_chat/docker-entrypoint.sh" ]
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
