@@ -5,6 +5,10 @@ sys.path.append(str(Path(__file__).resolve().parent))
 
 from fastapi import FastAPI
 from src.chats.router import router as chat_router
+from .chats import models
+from .database import engine
+
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 

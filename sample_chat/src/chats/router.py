@@ -1,6 +1,9 @@
-from fastapi import Response, status, HTTPException, APIRouter
+from fastapi import Response, status, HTTPException, APIRouter, Depends
+from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import select, update
 
-from src.chats.schemas import Chat
+from src.chats import schemas, models
+from src.database import get_db
 
 router = APIRouter(
     prefix="/chats",
@@ -8,54 +11,46 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-chats = []
-
 
 @router.post("/")
-async def create_chat(chat: Chat, response: Response):
-    chat = {**chat.model_dump(), "id": len(chats)+1}
-    chats.append(chat)
+async def create_chat(chat: schemas.Chat, response: Response, db: Session = Depends(get_db)):
+    new_chat = models.Chat(**chat.model_dump())
+    db.add(new_chat)
+    db.commit()
+    db.refresh(new_chat)
     response.status_code = status.HTTP_201_CREATED
     return {"data": chat}
 
 
-@router.get("/")
-async def read_chats():
-    return {"data": chats}
+@router.get("/", response_model=list[schemas.Chat])
+async def read_chats(db: Session = Depends(get_db)):
+    chats = db.scalars(select(models.Chat)).all()
+    return chats
 
 
-@router.get("/{id}")
-async def read_chat(id: int):
-    res = None
-    for chat in chats:
-        if chat["id"] == id:
-            res = chat
-    if not res:
+@router.get("/{id}", response_model=schemas.Chat)
+async def read_chat(id: int, db: Session = Depends(get_db)):
+    target = db.get(models.Chat, id)
+    if not target:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"{id} was Not found")
-    return {"data": res}
+    return target
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def remove_chat(id: int):
-    target = None
-    target_idx = None
-    for idx, chat in enumerate(chats):
-        if chat["id"] == id:
-            target = chat
-            target_idx = idx
+async def remove_chat(id: int, db: Session = Depends(get_db)):
+    target = db.get(models.Chat, id)
     if not target:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"{id} was Not found")
-    chats.pop(target_idx)
+    db.delete(target)
+    db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@router.put("/{id}")
-async def update_chat(id: int, new_chat: Chat):
-    target_idx = None
-    for idx, chat in enumerate(chats):
-        if chat["id"] == id:
-            target_idx = idx
-    if target_idx is None:
+@router.put("/{id}", response_model=schemas.Chat)
+async def update_chat(id: int, new_chat: schemas.Chat, db: Session = Depends(get_db)):
+    if not db.scalar(select(models.Chat).filter_by(id=id)):
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"{id} was Not found")
-    chats[target_idx] = {**new_chat.model_dump(), "id": id}
-    return {"data": chats[target_idx]}
+    new_chat.id = id
+    db.execute(update(models.Chat).filter_by(id=id).values(**new_chat.model_dump()))
+    db.commit()
+    return new_chat
