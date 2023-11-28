@@ -23,6 +23,16 @@ services:
       [ "/ltp/sample_feed/docker-entrypoint.sh" ]
     depends_on:
       - mysql
+  postgres:
+    build:
+      context: ./db/postgres/
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/postgres/postgres-init-files/:/docker-entrypoint-initdb.d/
+      - ./db/postgres/postgres-conf/:/etc/postgresql/
+      - postgres-storage:/var/lib/postgresql/data
   sample-chat:
     build:
       context: ./sample_chat/
@@ -33,6 +43,8 @@ services:
       - "8080:8080"
     entrypoint:
       [ "/ltp/sample_chat/docker-entrypoint.sh" ]
+    depends_on:
+      - postgres
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -77,3 +89,4 @@ volumes:
   grafana-storage: {}
   influx-storage: {}
   mysql-storage: {}
+  postgres-storage: {}

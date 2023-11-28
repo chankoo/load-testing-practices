@@ -4,7 +4,7 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get install -y procps
+RUN apt-get update && apt-get install -y procps gcc libpq-dev
 
 
 WORKDIR /ltp/sample_chat
