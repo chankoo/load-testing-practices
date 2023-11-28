@@ -3,3 +3,6 @@ pydantic
 uvicorn
 psycopg2
 sqlalchemy
+email-validator
+passlib
+python-jose[cryptography]

@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).resolve().parent))
 
 from fastapi import FastAPI
 from src.chats.router import router as chat_router
+from src.auth.router import router as auth_router
 from .chats import models
 from .database import engine
 
@@ -19,3 +20,4 @@ async def root():
 
 
 app.include_router(chat_router)
+app.include_router(auth_router)

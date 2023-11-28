@@ -4,6 +4,7 @@ from sqlalchemy.sql.expression import select, update
 
 from src.chats import schemas, models
 from src.database import get_db
+from src.auth.services import get_current_user
 
 router = APIRouter(
     prefix="/chats",
@@ -12,9 +13,9 @@ router = APIRouter(
 )
 
 
-@router.post("/")
-async def create_chat(chat: schemas.Chat, response: Response, db: Session = Depends(get_db)):
-    new_chat = models.Chat(**chat.model_dump())
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def create_chat(chat: schemas.Chat, response: Response, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
+    new_chat = models.Chat(**{**chat.model_dump(), "user": user_id})
     db.add(new_chat)
     db.commit()
     db.refresh(new_chat)
@@ -22,13 +23,13 @@ async def create_chat(chat: schemas.Chat, response: Response, db: Session = Depe
     return {"data": chat}
 
 
-@router.get("/", response_model=list[schemas.Chat])
+@router.get("/", response_model=list[schemas.ChatRead])
 async def read_chats(db: Session = Depends(get_db)):
     chats = db.scalars(select(models.Chat)).all()
     return chats
 
 
-@router.get("/{id}", response_model=schemas.Chat)
+@router.get("/{id}", response_model=schemas.ChatRead)
 async def read_chat(id: int, db: Session = Depends(get_db)):
     target = db.get(models.Chat, id)
     if not target:
