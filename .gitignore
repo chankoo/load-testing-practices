@@ -4,3 +4,4 @@ sample_feed/*/migrations/*
 !sample_feed/*/migrations/__init__.py
 
 .env
+.ini

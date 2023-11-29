@@ -1,8 +1,4 @@
 from fastapi import FastAPI
-from .chats import models
-from .database import engine
-
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
