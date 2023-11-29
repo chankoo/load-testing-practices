@@ -1,9 +1,8 @@
 from pydantic import BaseModel
-from typing import Optional
+from datetime import datetime
 
 
 class Chat(BaseModel):
-    id: Optional[int] = None
     content: str
     published: bool = True
 
@@ -14,3 +13,4 @@ class Chat(BaseModel):
 class ChatRead(Chat):
     id: int
     user: int
+    created_at: datetime

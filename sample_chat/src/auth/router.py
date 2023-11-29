@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.post("/login")
+@router.post("/login", response_model=schemas.Token)
 def login(user_credential: schemas.UserLogin, db: Session = Depends(get_db)):
     user = db.scalar(select(models.User).filter_by(email=user_credential.email))
     if not user:
@@ -26,7 +26,7 @@ def login(user_credential: schemas.UserLogin, db: Session = Depends(get_db)):
     access_token = create_access_token(data={
         "user_id": user.id
     })
-    return {"token": access_token, "token_type": "Bearer"}
+    return {"access_token": access_token, "token_type": "Bearer"}
 
 
 @router.post("/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserRead)
