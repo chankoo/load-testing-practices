@@ -14,7 +14,7 @@ router = APIRouter(
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ChatRead)
-async def create_chat(chat: schemas.Chat, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
+async def create_chat(chat: schemas.ChatCreate, db: Session = Depends(get_db), user_id: int = Depends(get_current_user)):
     new_chat = models.Chat(user=user_id, **chat.model_dump())
     db.add(new_chat)
     db.commit()
