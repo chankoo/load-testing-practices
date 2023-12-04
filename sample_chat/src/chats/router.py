@@ -1,4 +1,5 @@
 from fastapi import Response, status, HTTPException, APIRouter, Depends
+from fastapi import WebSocket, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import select, update
 
@@ -11,6 +12,35 @@ router = APIRouter(
     tags=["chats"],
     responses={404: {"description": "Not found"}},
 )
+
+connected_users = {}
+
+
+@router.websocket("/ws/{channel_id}/")
+async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(None), db: Session = Depends(get_db)):
+    user_id = await get_current_user(token)
+    if not user_id:
+        await websocket.close()
+        return
+
+    await websocket.accept()
+    connected_users[user_id] = websocket
+
+    try:
+        while True:
+            data = await websocket.receive_text()
+
+            # Store message in the database
+            chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
+            db.add(chat_message)
+            db.commit()
+
+            # Broadcast message to other users (simplified example)
+            for user, ws in connected_users.items():
+                await ws.send_text(f"User {channel_id} says: {data}")
+    except:
+        # Handle disconnection or errors
+        connected_users.pop(user_id, None)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ChatRead)
