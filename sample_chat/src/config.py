@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire: int
+    redis_host: str
+    redis_port: str
+    redis_db: str
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
