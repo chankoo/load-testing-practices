@@ -11,10 +11,10 @@ class Chat(BaseModel):
 
 
 class ChatRead(Chat):
-    id: int
+    id: int | str
     channel_id: int
     user: int
-    created_at: datetime
+    created_at: datetime | str
 
 
 class ChatCreate(Chat):

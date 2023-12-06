@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import Response, status, HTTPException, APIRouter, Depends
 from fastapi import WebSocket, Query
 from sqlalchemy.orm import Session
@@ -6,6 +8,7 @@ from sqlalchemy.sql.expression import select, update
 from src.chats import schemas, models
 from src.database import get_db
 from src.auth.services import get_current_user
+from .caches import ChatCacheWrapper
 
 router = APIRouter(
     prefix="/chats",
@@ -20,6 +23,7 @@ connected_users = {}
 async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(None), db: Session = Depends(get_db)):
     user_id = await get_current_user(token)
     if not user_id:
+
         await websocket.close()
         return
 
@@ -29,11 +33,21 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
     try:
         while True:
             data = await websocket.receive_text()
+            now = datetime.datetime.now()
+            chat = {
+                "id": str(hash(f"{now.timestamp()}_{user_id}")),
+                "user": user_id,
+                "content": data,
+                "channel_id": channel_id, "created_at": now.isoformat(), "published": True,
+            }
 
-            # Store message in the database
-            chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
-            db.add(chat_message)
-            db.commit()
+            cache = ChatCacheWrapper(channel_id=channel_id)
+            cache.add_chats([chat])
+
+            # # Store message in the database
+            # chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
+            # db.add(chat_message)
+            # db.commit()
 
             # Broadcast message to other users (simplified example)
             for user, ws in connected_users.items():
@@ -41,6 +55,16 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
     except:
         # Handle disconnection or errors
         connected_users.pop(user_id, None)
+
+
+@router.get("/channels/{channel_id}", response_model=list[schemas.ChatRead])
+async def read_chats(channel_id: int, db: Session = Depends(get_db), cache: str = Query(None)):
+    if cache:
+        cache = ChatCacheWrapper(channel_id=channel_id)
+        chats = [chat for chat in cache.get_chats()]
+    else:
+        chats = db.scalars(select(models.Chat).filter_by(channel_id=channel_id)).all()
+    return chats
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.ChatRead)
