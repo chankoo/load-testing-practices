@@ -1,7 +1,9 @@
 import datetime
+import asyncio
+import json
 
 from fastapi import Response, status, HTTPException, APIRouter, Depends
-from fastapi import WebSocket, Query
+from fastapi import WebSocket, WebSocketDisconnect, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import select, update
 
@@ -9,6 +11,7 @@ from src.chats import schemas, models
 from src.database import get_db
 from src.auth.services import get_current_user
 from .caches import ChatCacheWrapper
+from .msg_queues import ChatMsgQWrapper
 
 router = APIRouter(
     prefix="/chats",
@@ -30,6 +33,12 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
     await websocket.accept()
     connected_users[user_id] = websocket
 
+    # Subscribe to Redis channel for this chat room
+    msg_q = ChatMsgQWrapper(channel_id=channel_id)
+    await msg_q.subscribe(channel_id)
+    asyncio.create_task(redis_message_handler(websocket, msg_q))
+    
+
     try:
         while True:
             data = await websocket.receive_text()
@@ -41,20 +50,32 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
                 "channel_id": channel_id, "created_at": now.isoformat(), "published": True,
             }
 
-            cache = ChatCacheWrapper(channel_id=channel_id)
-            await cache.add_chats([chat])
+            # Publishing message to Redis channel
+            await msg_q.publish(json.dumps(chat))
+
+            # cache = ChatCacheWrapper(channel_id=channel_id)
+            # await cache.add_chats([chat])
 
             # # Store message in the database
             # chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
             # db.add(chat_message)
             # db.commit()
 
-            # Broadcast message to other users (simplified example)
-            for user, ws in connected_users.items():
-                await ws.send_text(f"User {channel_id} says: {data}")
-    except:
+            # # Broadcast message to other users (simplified example)
+            # for user, ws in connected_users.items():
+            #     await ws.send_text(f"User {channel_id} says: {data}")
+    except WebSocketDisconnect:
         # Handle disconnection or errors
         connected_users.pop(user_id, None)
+        await msg_q.unsubscribe()
+
+
+async def redis_message_handler(websocket, msg_q):
+    while True:
+        msg = await msg_q.get_message()
+        if msg and msg['type'] == 'message':
+            await websocket.send_text(msg['data'])
+
 
 
 @router.get("/channels/{channel_id}", response_model=list[schemas.ChatRead])
