@@ -42,7 +42,7 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
             }
 
             cache = ChatCacheWrapper(channel_id=channel_id)
-            cache.add_chats([chat])
+            await cache.add_chats([chat])
 
             # # Store message in the database
             # chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
@@ -61,7 +61,7 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
 async def read_chats(channel_id: int, db: Session = Depends(get_db), cache: str = Query(None)):
     if cache:
         cache = ChatCacheWrapper(channel_id=channel_id)
-        chats = [chat for chat in cache.get_chats()]
+        chats = await cache.get_chats()
     else:
         chats = db.scalars(select(models.Chat).filter_by(channel_id=channel_id)).all()
     return chats
