@@ -12,6 +12,7 @@ from src.database import get_db
 from src.auth.services import get_current_user
 from .caches import ChatCacheWrapper
 from .msg_queues import ChatMsgQWrapper
+from .tasks import save_chat
 
 router = APIRouter(
     prefix="/chats",
@@ -35,11 +36,10 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
     connected_users[user_id] = websocket
 
     # Subscribe to Redis channel for this chat room
-    msg_q = ChatMsgQWrapper(channel_id=channel_id)
-    await msg_q.subscribe(channel_id)
+    msg_q = ChatMsgQWrapper(channel_id=channel_id, q_type="broadcast")
+    await msg_q.subscribe()
     asyncio.create_task(redis_message_handler(websocket, msg_q))
     
-
     try:
         while True:
             data = await websocket.receive_text()
@@ -51,25 +51,12 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
                 "channel_id": channel_id, "created_at": now.isoformat(), "published": True,
             }
 
-            # Publishing message to Redis channel
-            await msg_q.publish(json.dumps(chat))
-
-            # Store message in the cache
-            cache = ChatCacheWrapper(channel_id=channel_id)
-            await cache.add_chats([chat])
-
-            # # Store message in the database
-            # chat_message = models.Chat(user=user_id, content=data, channel_id=channel_id)
-            # db.add(chat_message)
-            # db.commit()
-
-            # # Broadcast message to other users (simplified example)
-            # for user, ws in connected_users.items():
-            #     await ws.send_text(f"User {channel_id} says: {data}")
-    except:
+            # celery task
+            save_chat.delay(channel_id=channel_id, chat=chat)
+    except Exception as e:
         # Handle disconnection or errors
         connected_users.pop(user_id, None)
-        await msg_q.unsubscribe()
+        raise e
 
 
 async def redis_message_handler(websocket, msg_q):

@@ -11,6 +11,10 @@ class ChatCacheWrapper(RedisCacheWrapper):
         for chat in chats:
             await self.rpush(f"chat_channel_{self.channel_id}", json.dumps(chat))
 
+    def add_chats_sync(self, chats: list[dict]):
+        for chat in chats:
+            self.rd_sync.rpush(f"chat_channel_{self.channel_id}", json.dumps(chat))
+
     async def get_chats(self, start=0, end=-1) -> list:
         res = []
         chats = await self.lrange(f"chat_channel_{self.channel_id}", start, end)
