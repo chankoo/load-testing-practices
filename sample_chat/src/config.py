@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR))
 
@@ -19,6 +20,7 @@ class Settings(BaseSettings):
     redis_host: str
     redis_port: str
     redis_db: str
+    redis_broker_db: str
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 

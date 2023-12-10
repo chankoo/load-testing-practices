@@ -23,6 +23,40 @@ services:
       [ "/ltp/sample_feed/docker-entrypoint.sh" ]
     depends_on:
       - mysql
+  celery-feed:
+    build:
+      context: ./sample_feed
+      dockerfile: ./feed/celery.Dockerfile
+    container_name: celery-feed
+    volumes:
+      - ./sample_feed:/ltp/sample_feed
+    entrypoint:
+      [ "/ltp/sample_feed/feed/docker-entrypoint-celery.sh" ]
+    depends_on:
+      - sample-feed
+      - redis
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3005:3000'
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    user: root
+  influxdb:
+    image: influxdb:1.8.10-alpine
+    platform: linux/amd64
+    container_name: influx
+    ports:
+      - '8086:8086'
+    environment:
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
+    volumes:
+      - influx-storage:/var/lib/influxdb
   postgres:
     build:
       context: ./db/postgres/
@@ -45,46 +79,25 @@ services:
       [ "/ltp/sample_chat/docker-entrypoint.sh" ]
     depends_on:
       - postgres
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
-    ports:
-      - '3005:3000'
-    depends_on:
-      - influxdb
+  celery-chat:
+    build:
+      context: ./sample_chat
+      dockerfile: ./src/chats/celery.Dockerfile
+    container_name: celery-chat
     volumes:
-      - grafana-storage:/var/lib/grafana
-    user: root
-  influxdb:
-    image: influxdb:1.8.10-alpine
-    platform: linux/amd64
-    container_name: influx
-    ports:
-      - '8086:8086'
-    environment:
-      - INFLUXDB_ADMIN_ENABLED=true
-      - INFLUXDB_ADMIN_USER=admin
-      - INFLUXDB_ADMIN_PASSWORD=admin
+      - ./sample_chat:/ltp/sample_chat
+    entrypoint:
+      [ "/ltp/sample_chat/docker-entrypoint-celery.sh" ]
+    depends_on:
+      - sample-chat
+      - redis
     tty: true
     stdin_open: true
-    volumes:
-      - influx-storage:/var/lib/influxdb
   redis:
     image: redis:latest
     container_name: redis
     ports:
       - '6379:6379'
-  celery-feed:
-    build:
-      context: ./sample_feed
-      dockerfile: ./feed/celery.Dockerfile
-    container_name: celery-feed
-    volumes:
-      - ./sample_feed:/ltp/sample_feed
-    entrypoint:
-      [ "/ltp/sample_feed/feed/docker-entrypoint-celery.sh" ]
-    depends_on:
-      - sample-feed
 volumes:
   grafana-storage: {}
   influx-storage: {}
