@@ -11,3 +11,4 @@ alembic
 websockets
 redis
 celery
+snowflake-id

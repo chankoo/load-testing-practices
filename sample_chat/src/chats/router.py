@@ -6,6 +6,7 @@ from fastapi import Response, status, HTTPException, APIRouter, Depends
 from fastapi import WebSocket, WebSocketDisconnect, Query
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import select, update
+from snowflake import SnowflakeGenerator
 
 from src.chats import schemas, models
 from src.database import get_db
@@ -21,6 +22,11 @@ router = APIRouter(
 )
 
 connected_users = {}
+
+async def get_id(instance: int):
+    epoch = 1702379129
+    gen = SnowflakeGenerator(instance, epoch=epoch)
+    return next(gen)
 
 
 @router.websocket("/ws/{channel_id}/")
@@ -45,7 +51,7 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
             data = await websocket.receive_text()
             now = datetime.datetime.now()
             chat = {
-                "id": str(hash(f"{now.timestamp()}_{user_id}")),
+                "id": await get_id(instance=user_id),
                 "user": user_id,
                 "content": data,
                 "channel_id": channel_id, "created_at": now.isoformat(), "published": True,
