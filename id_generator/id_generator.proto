@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package idgenerator;
+
+service IDGenerator {
+  rpc Generate (GenerateRequest) returns (GenerateResponse) {}
+}
+
+message GenerateRequest {
+  int32 instance = 1;
+}
+
+message GenerateResponse {
+  string id = 1;
+}

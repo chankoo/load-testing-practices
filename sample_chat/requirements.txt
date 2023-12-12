@@ -12,3 +12,5 @@ websockets
 redis
 celery
 snowflake-id
+grpcio
+grpcio-tools

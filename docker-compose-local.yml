@@ -98,6 +98,16 @@ services:
     container_name: redis
     ports:
       - '6379:6379'
+  id-generator:
+    build:
+      context: ./id_generator/
+    container_name: id-generator
+    volumes:
+      - ./id_generator:/ltp/id_generator
+    ports:
+      - "50051:50051"
+    entrypoint:
+      [ "/ltp/id_generator/docker-entrypoint.sh" ]
 volumes:
   grafana-storage: {}
   influx-storage: {}

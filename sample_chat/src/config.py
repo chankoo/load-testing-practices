@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     redis_port: str
     redis_db: str
     redis_broker_db: str
+    id_generator_host: str
+    grpc_port: int
 
     model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
 
