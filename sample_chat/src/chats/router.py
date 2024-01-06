@@ -43,14 +43,20 @@ async def ws_channel(websocket: WebSocket, channel_id: int, token: str = Query(N
     
     try:
         while True:
+            # msg from client
             data = await websocket.receive_text()
             now = datetime.datetime.now()
             chat = {
                 "id": await get_snowflake_id(),
                 "user": user_id,
                 "content": data,
-                "channel_id": channel_id, "created_at": now.isoformat(), "published": True,
+                "channel_id": channel_id,
+                "created_at": now.isoformat(),
+                "published": True,
             }
+
+            # publish msg
+            await msg_q.publish(json.dumps(chat))
 
             # celery task
             save_chat.delay(channel_id=channel_id, chat=chat)
@@ -65,8 +71,7 @@ async def redis_message_handler(websocket, msg_q):
         while True:
             msg = await msg_q.get_message()
             if msg and msg['type'] == 'message':
-                
-                await websocket.send_text(msg['data'])
+                await websocket.send_text(json.loads(msg['data'])['content'])
     except:
         await msg_q.unsubscribe()
 
