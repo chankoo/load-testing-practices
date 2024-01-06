@@ -18,3 +18,8 @@ def reset_data(db: Session = Depends(get_db)):
     redis = RedisCacheWrapper()
     redis.reset_redis()
     return Response(json.dumps({"status": "success"}))
+
+
+@router.get("/health")
+async def health():
+    return {"status": "ok"}

@@ -1,9 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from .config import settings
+from .config import settings, check_local_uname
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://{settings.database_username}:{settings.database_pwd}@{settings.database_host}:{settings.database_port}/{settings.database_name}"
+
+if not check_local_uname():
+    SQLALCHEMY_DATABASE_URL = f"sqlite:///./{settings.database_name}.db"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

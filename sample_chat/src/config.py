@@ -7,6 +7,9 @@ sys.path.append(str(BASE_DIR))
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
+def check_local_uname():
+    import platform
+    return 'linuxkit' in platform.uname().release
 
 class Settings(BaseSettings):
     database_host: str
@@ -24,7 +27,7 @@ class Settings(BaseSettings):
     id_generator_host: str
     grpc_port: int
 
-    model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
+    model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/{'.env' if check_local_uname() else '.env.cloud'}")
 
 
 @lru_cache

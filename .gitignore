@@ -5,3 +5,5 @@ sample_feed/*/migrations/*
 
 .env
 .ini
+
+test.db
