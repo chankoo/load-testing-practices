@@ -1,0 +1,15 @@
+fastapi
+pydantic
+uvicorn
+sqlalchemy[asyncio]
+alembic
+pytest
+pydantic_settings
+pymysql
+aiomysql
+cryptography
+pytest-asyncio
+aiosqlite
+redis
+httpx
+faker

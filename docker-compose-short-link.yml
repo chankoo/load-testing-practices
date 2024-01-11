@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  mysql-short-link:
+    build:
+      context: ./db/short_link/
+    container_name: mysql-short-link
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./db/short_link/mysql-init-files/:/docker-entrypoint-initdb.d/
+      - ./db/short_link/mysql-confs/:/etc/mysql/conf.d/
+      - mysql-short-link-storage:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-proot"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 0s
+  short-link:
+    build:
+      context: ./short_link/
+    container_name: short-link
+    volumes:
+      - ./short_link:/ltp/short_link
+    ports:
+      - "80:80"
+    entrypoint:
+      [ "/ltp/short_link/docker-entrypoint.sh" ]
+    depends_on:
+      mysql-short-link:
+        condition: service_healthy
+  redis-short-link:
+    image: redis:latest
+    container_name: redis-short-link
+    ports:
+      - '6379:6379'
+volumes:
+  mysql-short-link-storage: {}
