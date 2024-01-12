@@ -1,13 +1,9 @@
-import asyncio
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import select, update
 from pydantic import HttpUrl
 
 from . import models
 from .caches import URLCacheWrapper
-
-lock = asyncio.Lock()
 
 
 async def get_exist_short_obj(url: HttpUrl, db: AsyncSession) -> dict | None:
@@ -33,11 +29,10 @@ async def get_short_url_obj(short_id: str, db: AsyncSession) -> dict | None:
 
 
 async def create_short(url: HttpUrl, db: AsyncSession) -> models.ShortUrl:
-    async with lock:
-        new_short_url = models.ShortUrl(url=url)
-        db.add(new_short_url)
-        await db.commit()
-        await db.refresh(new_short_url)
+    new_short_url = models.ShortUrl(url=url)
+    db.add(new_short_url)
+    await db.commit()
+    await db.refresh(new_short_url)
     return new_short_url
 
 
