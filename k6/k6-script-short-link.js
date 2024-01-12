@@ -33,7 +33,7 @@ const testCreate = async () => {
     },
   };
   const body = {
-    "url": "https://concurrency-100.com",
+    "url": "https://concurrency-100-lock.com",
   }
   const baseUrl = 'http://0.0.0.0';
   const path = '/short-links'

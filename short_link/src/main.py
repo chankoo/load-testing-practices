@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI, Depends, status, HTTPException, Response
 from fastapi.responses import JSONResponse
 from starlette.responses import RedirectResponse
@@ -17,18 +19,21 @@ from .crud import (
 
 app = FastAPI()
 
+lock = asyncio.Lock()
 
 @app.post("/short-links")
 async def create_short_link(
     url: schemas.URL, db: AsyncSession = Depends(get_db)
 ) -> JSONResponse:
-    exist_short = await get_exist_short_obj(url.url, db)
-    if exist_short:
-        return JSONResponse(
-            content={"data": exist_short}, status_code=status.HTTP_200_OK
-        )
+    async with lock:
+        # set asyncio lock
+        exist_short = await get_exist_short_obj(url.url, db)
+        if exist_short:
+            return JSONResponse(
+                content={"data": exist_short}, status_code=status.HTTP_200_OK
+            )
+        new_short = await create_short(url=url.url, db=db)
 
-    new_short = await create_short(url=url.url, db=db)
     short_id = base62_encode(new_short.id)
     new_short = await update_short_id(short_url=new_short, short_id=short_id, db=db)
 
