@@ -25,6 +25,8 @@ lock = asyncio.Lock()
 async def create_short_link(
     url: schemas.URL, db: AsyncSession = Depends(get_db)
 ) -> JSONResponse:
+    await db.connection(execution_options={"isolation_level": "SERIALIZABLE"})
+
     async with lock:
         # set asyncio lock
         exist_short = await get_exist_short_obj(url.url, db)

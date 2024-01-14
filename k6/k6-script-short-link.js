@@ -2,11 +2,12 @@ import http from 'k6/http';
 import { sleep, check, fail } from 'k6';
 
 export let options = {
-  vus: 100,
+  vus: 3000,
   duration: "5s",
   discardResponseBodies: true,
 };
 var baseUrl = 'http://alb-short-link-1813400222.ap-northeast-2.elb.amazonaws.com';
+// baseUrl = 'http://0.0.0.0';
 const testRead = async () => {
   const params = {
     headers: {
@@ -32,7 +33,7 @@ const testCreate = async () => {
     },
   };
   const body = {
-    "url": "https://concurrency-100-lock.com",
+    "url": "https://concurrency-3000-serializable.com",
   }
   const path = '/short-links'
   const res = await http.post(baseUrl + path, JSON.stringify(body), params);
