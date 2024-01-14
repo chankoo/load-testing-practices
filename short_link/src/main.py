@@ -4,10 +4,11 @@ from fastapi import FastAPI, Depends, status, HTTPException, Response
 from fastapi.responses import JSONResponse
 from starlette.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+from redis import asyncio as aioredis
 
 from .database import get_db
 from . import models, schemas
-from .caches import URLCacheWrapper
+from .caches import URLCacheWrapper, URLCacheLock
 from .utils import base62_encode
 from .crud import (
     get_exist_short_obj,
@@ -19,15 +20,13 @@ from .crud import (
 
 app = FastAPI()
 
-lock = asyncio.Lock()
+redis_lock = URLCacheLock(name='url_create_lock')
 
 @app.post("/short-links")
 async def create_short_link(
     url: schemas.URL, db: AsyncSession = Depends(get_db)
 ) -> JSONResponse:
-    await db.connection(execution_options={"isolation_level": "SERIALIZABLE"})
-
-    async with lock:
+    async with redis_lock.lock:
         # set asyncio lock
         exist_short = await get_exist_short_obj(url.url, db)
         if exist_short:

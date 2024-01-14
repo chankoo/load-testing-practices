@@ -36,5 +36,12 @@ class RedisCacheWrapper(object):
 
 
 class URLCacheWrapper(RedisCacheWrapper):
-    def __init__(self):
-        super(URLCacheWrapper, self).__init__()
+    pass
+
+
+class URLCacheLock(RedisCacheWrapper):
+    lock = None
+
+    def __init__(self, name: str):
+        super().__init__()
+        self.lock = self.rd.lock(name)

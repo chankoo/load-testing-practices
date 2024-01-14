@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { sleep, check, fail } from 'k6';
 
 export let options = {
-  vus: 3000,
+  vus: 1000,
   duration: "5s",
   discardResponseBodies: true,
 };
@@ -33,7 +33,7 @@ const testCreate = async () => {
     },
   };
   const body = {
-    "url": "https://concurrency-3000-serializable.com",
+    "url": "https://concurrency-1000-redis-lock.com",
   }
   const path = '/short-links'
   const res = await http.post(baseUrl + path, JSON.stringify(body), params);
