@@ -6,6 +6,10 @@ from functools import lru_cache
 BASE_DIR = Path(__file__).resolve().parent
 sys.path.append(str(BASE_DIR))
 
+def check_local_uname():
+    import platform
+    return 'linuxkit' in platform.uname().release
+
 
 class Settings(BaseSettings):
     database_host: str
@@ -17,7 +21,7 @@ class Settings(BaseSettings):
     redis_port: str
     redis_db: str
 
-    model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/.env")
+    model_config = SettingsConfigDict(env_file=f"{BASE_DIR}/{'.env' if check_local_uname() else '.env.cloud'}")
 
 
 @lru_cache

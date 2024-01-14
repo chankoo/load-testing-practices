@@ -1,0 +1,50 @@
+{
+    "family": "short-link",
+    "networkMode": "awsvpc",
+    "taskRoleArn": "arn:aws:iam::009954058431:role/ecsTaskRole",
+    "executionRoleArn": "arn:aws:iam::009954058431:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "short-link",
+            "image": "009954058431.dkr.ecr.ap-northeast-2.amazonaws.com/short-link:latest",
+            "portMappings": [
+                {
+                    "name": "short-link-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "entryPoint": [
+                "/ltp/short_link/docker-entrypoint.sh"
+            ],
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/short-link",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            }
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "volumes": [],
+    "runtimePlatform": {
+        "cpuArchitecture": "ARM64",
+        "operatingSystemFamily": "LINUX"
+    }
+}

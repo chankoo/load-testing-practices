@@ -6,14 +6,13 @@ export let options = {
   duration: "5s",
   discardResponseBodies: true,
 };
-
+var baseUrl = 'http://alb-short-link-1813400222.ap-northeast-2.elb.amazonaws.com';
 const testRead = async () => {
   const params = {
     headers: {
       'Content-Type': 'application/json',
     },
   };
-  const baseUrl = 'http://0.0.0.0';
   const path = '/short-links'
   const shortId = '100'
   const res1 = await http.get(baseUrl + path + '/' + shortId, params);
@@ -35,7 +34,6 @@ const testCreate = async () => {
   const body = {
     "url": "https://concurrency-100-lock.com",
   }
-  const baseUrl = 'http://0.0.0.0';
   const path = '/short-links'
   const res = await http.post(baseUrl + path, JSON.stringify(body), params);
   const checkResult = check(res, {
